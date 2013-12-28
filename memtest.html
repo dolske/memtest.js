@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<meta charset="UTF-8">
+<script src="memtest-ui.js"></script>
+<script src="memtest.js"></script>
+
+<style>
+
+#screen {
+  color: #ccc;
+  background-color: blue;
+  border: 15px solid black;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 1);
+  white-space: pre;
+  font-family: monospace;
+  float: left;
+}
+#brand  {
+  color: black; background-color: green;
+}
+#brand > a {
+  color: inherit;
+  text-decoration: none;
+}
+@keyframes blinker {
+       0% { opacity: 1.0; }
+       49% { opacity: 1.0; }
+       51% { opacity: 0.0; }
+       100% { opacity: 0.0; }
+}
+#plus   {
+    color: red;
+    animation-name: blinker; 
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-duration: 0.535s; 
+}
+.badmem { color: #ccc; background-color: red; }
+
+#numerrors { color: #0d0; }
+#numerrors[fail] { color: red; }
+
+#bar { color: blue; background-color: #ccc; }
+</style>
+
+<h2>memtestJS</h2>
+
+<div id=screen><span id=brand><a href="http://dolske.net/hacks/memtestjs/"><span id=appname></span><span id=plus>+</span><span id=appvers></a></span></span>|<span id=passstatus></span>
+<span id=osinfo></span>|<span id=teststatus></span>
+<span id=cpuinfo></span>|<span id=testname></span>
+<span id=raminfo></span>|<span id=segmentinfo></span>
+<span id=info1></span>|<span id=testpattern></span>
+<span id=info2></span>|-------------------------------------------------
+
+
+ Pass#  Run Time   LastPass    Speed    Errors
+ -----  ---------  --------  ---------  ------
+<span id=passnum></span>  <span id=walltime></span>  <span id=lastpasstime></span>  <span id=memspeed></span>  <span id=numerrors></span>
+------------------------------------------------------------------------------
+Tst  Pass   Failing Address          Good       Bad     Err-Bits  Err # Chan
+---  ----  -----------------------  --------  --------  --------  ----- ----
+<div id=errors></div>
+<span id=bar>(ESC)Reboot  (c)onfiguration   (SP)scroll_lock  (CR)scroll_unlock               </span>
+</div>
+<br clear=all>
+<br>
+
+memblock size: <input id=block_size value=64 size=4>(MB)<br>
+target working set: <input id=workingset_size value=.1 size=3>(GB)<br>
+num passes: <input id=max_passes value=1 size=4>(0 == infinite)<br>
+<br>
+<button id=startstop onclick="startstop()">Start Memtest</button>
+<br><br><br>
+
+<script>
+function startstop() {
+  var button = document.getElementById('startstop');
+
+  if (MemtestRunner.isRunning) {
+    button.textContent = "Start Memtest";
+    MemtestRunner.stop();
+  } else {
+    max_passes = document.getElementById("max_passes").value;
+    block_size = document.getElementById("block_size").value * 1048576;
+    var workingset_size = document.getElementById("workingset_size").value * 1073741824;
+    var num_blocks = Math.floor(workingset_size / block_size);
+
+    button.textContent = "Stop Memtest";
+    MemtestRunner.start(num_blocks);
+  }
+}
+
+window.onkeypress = function(e) {
+  //console.log("KEY: keyCode=" + e.keyCode + ", charCode=" + e.charCode);
+  if (e.altKey || e.metaKey || e.ctrlKey)
+    return;
+
+  switch (e.charCode) {
+    case 32: // space
+    case 99: // 'c'
+      return;
+  }
+
+  switch (e.keyCode) {
+    case 13: // return
+      return;
+    case 27: // ESC
+      alert('Unlikely. :)');
+      return;
+  }
+}
+
+/* Setup initial UI state */
+memtestUI.init();
+
+</script>
+
+</html>
+
