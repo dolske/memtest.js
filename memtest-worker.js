@@ -7,7 +7,7 @@ onmessage = function(e) {
     var command = data.command;
     switch (command) {
         case "init":
-            init(e.data.block_size, e.data.num_blocks);
+            init(e.data.block_size, e.data.num_blocks, e.data.prealloc_blocks);
             postMessage({command:"testFinished"});
             break;
         case "uninit":
@@ -64,7 +64,18 @@ function ui(command, arg1, arg2, arg3, arg4, arg5) {
                  arg1:arg1, arg2:arg2, arg3:arg3, arg4:arg4, arg5:arg5 });
 }
 
-function init(segment_size, num_segments) {
+function init(segment_size, num_segments, prealloc_segments) {
+    // First preallocate (and touch) some temporary memory, to attept to
+    // disperse the real memory-of-interest into different physical memory.
+    // XXX is temp_segments getting GC'd promptly, or does it hang around?
+    var temp_segments = [];
+    for (var i = 0; i < prealloc_segments; i++) {
+      var tempblob = new ArrayBuffer(segment_size);
+      temp_segments[i] = new Uint32Array(tempblob);
+      touchMem(temp_segments[i]);
+    }
+    log("Worker pre-allocated " + prealloc_segments + " segments of " + segment_size + " bytes.");
+
     for (var i = 0; i < num_segments; i++) {
       // Allocate a chunk of memory
       var blob = new ArrayBuffer(segment_size);

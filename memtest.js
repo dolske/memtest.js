@@ -61,7 +61,7 @@ MemtestRunner = {
           "memtest_inversions32",
          ],
 
-  start: function(num_blocks) {
+  start: function(num_blocks, prealloc_blocks) {
     this.isRunning = true;
     this.currentTestNum = -1;
 
@@ -75,7 +75,7 @@ MemtestRunner = {
     memtestUI.setRuntime();
 
     runtime_interval = setInterval("memtestUI.setRuntime()", 1000);
-    memWorker.postMessage({ command: "init", block_size: block_size, num_blocks: num_blocks});
+    memWorker.postMessage({ command: "init", block_size: block_size, num_blocks: num_blocks, prealloc_blocks: prealloc_blocks});
   },
 
   stop: function() {
