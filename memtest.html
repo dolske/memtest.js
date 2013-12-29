@@ -113,6 +113,10 @@ window.onkeypress = function(e) {
 /* Setup initial UI state */
 memtestUI.init();
 
+var LOGGER_HACK = true;
+if (LOGGER_HACK)
+  window.onload = startstop;
+
 </script>
 
 </html>

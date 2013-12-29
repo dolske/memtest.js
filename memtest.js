@@ -115,10 +115,16 @@ MemtestRunner = {
         this.isRunning = false;
         memWorker.postMessage({ command: "uninit" });
 
-        // XXX for testing
-        var report = "memtestjs\n" + memtestUI.makeFinalReport();
-        report = report.replace(/\n/g, "\r\n");
-        window.postMessage(report, "*");
+        if (LOGGER_HACK) {
+          // XXX for testing -- see https://github.com/dolske/weblogger
+          var report = "weblogger:" + memtestUI.makeFinalReport();
+          report = report.replace(/\n/g, "\r\n");
+          window.postMessage(report, "*");
+          memtestUI.ui.errors.innerHTML = ""; // Only report stuff once.
+
+          // Loop forever, w/ delay, to give GC plenty of time.
+          setTimeout(startstop, 45000);
+        }
     }
   },
 
