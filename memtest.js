@@ -124,7 +124,7 @@ MemtestRunner = {
           memtestUI.ui.errors.innerHTML = ""; // Only report stuff once.
 
           // Loop forever, w/ delay, to give GC plenty of time.
-          setTimeout(startstop, 45000);
+          setTimeout(startstop, 10000);
         }
     }
   },
