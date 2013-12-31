@@ -43,7 +43,8 @@
 // speed of execution -- want to drive address/data line chanes fast,
 //   so slow testing might not trigger flaws
 
-var num_passes, max_passes, num_errors, block_size;
+var num_passes, max_passes, num_errors;
+var block_size = 32 * 1048576; // MB
 var pass_start = 0, runtime_start = 0, runtime_interval;
 
 

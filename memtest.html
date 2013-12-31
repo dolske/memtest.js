@@ -65,10 +65,9 @@ Tst  Pass   Failing Address          Good       Bad     Err-Bits  Err # Chan
 <br clear=all>
 <br>
 
-memblock size: <input id=block_size value=64 size=4>(MB)<br>
-target working set: <input id=workingset_size value=.1 size=3>(GB)<br>
-prealloc displacement: <input id=prealloc_size value=2.5 size=3>(GB, max)<br>
-num passes: <input id=max_passes value=1 size=4>(0 == infinite)<br>
+System memory: <input id=system_mem value=2 size=3 style="text-align: right">GB<br>
+Amount to test: <input id=test_percent value=25 size=3 style="text-align: right">%<br>
+Run test <input id=max_passes value=1 size=3 style="text-align: right"> time(s).<br>
 <br>
 <button id=startstop onclick="startstop()">Start Memtest</button>
 <br><br><br>
@@ -81,13 +80,7 @@ function startstop() {
     button.textContent = "Start Memtest";
     MemtestRunner.stop();
   } else {
-    max_passes = document.getElementById("max_passes").value;
-    block_size = document.getElementById("block_size").value * 1048576;
-
-    var workingset_size = document.getElementById("workingset_size").value * 1073741824;
-    var num_blocks = Math.floor(workingset_size / block_size);
-
-    // XXX Probably should cap this, since a 32bit Windows process is capped
+    // XXX Cap claimed memory, since a 32bit Windows process is capped
     // at ~3GB anyway. Can content figure out if it's on a 64bit system (other
     // than UA hax)?. This cap is kind of a limitation of testing in a 32bit
     // browser, but hopefully real-world systems (ie, with other stuff
@@ -98,12 +91,29 @@ function startstop() {
     // after this is dealloc'd.
     // XXX real world + phys addr logging might be needed to see if we're
     // able to get full coverage over time.
-    var prealloc_size = document.getElementById("prealloc_size").value * 1073741824;
-    prealloc_size *= Math.random();
-    var prealloc_blocks = Math.floor(prealloc_size / block_size);
+    var system_mem   = document.getElementById("system_mem").value * 1073741824;
+    var MAX_32BIT = 2.5 * 1073741824; //2.5 GB, should be enough for max - browser overhead
+    if (system_mem > MAX_32BIT) {
+      console.log("Capping claimed memory to 2.5GB, a rough max for 32bit browsers.");
+      system_mem = MAX_32BIT;
+    }
+    var test_percent = document.getElementById("test_percent").value / 100;
+
+    var system_blocks = Math.floor(system_mem / block_size);
+    if (system_blocks == 0) system_blocks = 1; // enforce minimums
+    var test_blocks = Math.floor(system_blocks * test_percent);
+    if (test_blocks == 0) test_blocks = 1; // enforce minimums
+
+    // Randomly place the test blocks somewhere within the available memory.
+    var prealloc_percent = Math.random();
+    var prealloc_blocks = Math.floor((system_blocks - test_blocks) * prealloc_percent);
+
+    // 0 == infinite
+    max_passes = document.getElementById("max_passes").value;
+
 
     button.textContent = "Stop Memtest";
-    MemtestRunner.start(num_blocks, prealloc_blocks);
+    MemtestRunner.start(test_blocks, prealloc_blocks);
   }
 }
 
