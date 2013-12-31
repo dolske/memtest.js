@@ -1,7 +1,7 @@
 var memtestUI = {
-	ui : { /* references to document elements go here. */ },
+    ui : { /* references to document elements go here. */ },
 
-	init: function() {
+    init: function() {
         this.ui.screen      = document.getElementById('screen');
         this.ui.appname     = document.getElementById('appname');
         this.ui.appvers     = document.getElementById('appvers');
@@ -42,7 +42,7 @@ var memtestUI = {
         this.setLastPassTime();
         this.setMemorySpeed(0);
         this.setPassNum(0);
-	},
+    },
 
     makeChars: function(i, c) {
         var chars = "";
@@ -73,12 +73,12 @@ var memtestUI = {
         len -= ram.length;
         this.ui.raminfo.textContent = "RAM: " + ram + this.makeChars(len, " ");
     },
-	setVersion: function(version) {
-	  var len = 28;
-	  len -= 1; // hack, the red "+" is hardcoded.
+    setVersion: function(version) {
+      var len = 28;
+      len -= 1; // hack, the red "+" is hardcoded.
 
       var appname = "MemtestJS";
-	  version = " v" + version;
+      version = " v" + version;
 
       var padding = (len - (appname.length + version.length)) / 2;
       var paddingLeft = Math.floor(padding);
@@ -86,7 +86,7 @@ var memtestUI = {
 
       this.ui.appname.textContent = this.makeChars(paddingLeft, " ") + appname;
       this.ui.appvers.textContent = version + this.makeChars(paddingRight, " ");
-	},
+    },
 
     setPassStatus: function(percent) {
         var text = " Pass " + Math.floor(100 * percent) + "% ";
