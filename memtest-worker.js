@@ -67,7 +67,6 @@ function ui(command, arg1, arg2, arg3, arg4, arg5) {
 function init(segment_size, num_segments, prealloc_segments) {
     // First preallocate (and touch) some temporary memory, to attept to
     // disperse the real memory-of-interest into different physical memory.
-    // XXX is temp_segments getting GC'd promptly, or does it hang around?
     var temp_segments = [];
     for (var i = 0; i < prealloc_segments; i++) {
       var tempblob = new ArrayBuffer(segment_size);
@@ -80,6 +79,7 @@ function init(segment_size, num_segments, prealloc_segments) {
       // Allocate a chunk of memory
       var blob = new ArrayBuffer(segment_size);
       memory_segments[i] = new Uint32Array(blob);
+      touchMem(memory_segments[i]);
     }
     log("Worker allocated " + num_segments + " segments of " + segment_size + " bytes.");
 }
