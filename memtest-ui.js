@@ -224,6 +224,10 @@ var memtestUI = {
         text += addr; // orig "000ac921e28 -  2761.1MB";
 
         text += "  ";
+        var mod4k = (index % 4096).toString();
+        text += this.makeChars(5 - mod4k.length, " ") + mod4k;
+
+        text += "  ";
         hex = goodVal.toString(16);
         text += this.makeChars(8 - hex.length, "0") + hex;
 
