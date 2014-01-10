@@ -124,9 +124,9 @@ var memtestUI = {
         var text = " Testing: "
         if (num >= 0) {
             size = size / 1048576; // change to MB
-            var begin = size * num;
-            var end = size * (num + 1);
-            var total = max * size;
+            var begin = Math.round(size * num);
+            var end   = Math.round(size * (num + 1));
+            var total = Math.round(max * size);
             text += begin + "MB - " + end + "MB of " + total + "MB";
         }
         this.ui.segmentInfo.textContent = text;
